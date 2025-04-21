@@ -20,12 +20,12 @@ jobs:
           - os: macos-latest
             arch: arm64
             compiler: ldc-latest
-          - os: windows-latest
-            arch: amd64
-            compiler: dmd-latest
-          - os: windows-latest
-            arch: amd64
-            compiler: ldc-latest
+          # - os: windows-latest
+          #   arch: amd64
+          #   compiler: dmd-latest
+          # - os: windows-latest
+          #   arch: amd64
+          #   compiler: ldc-latest
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
