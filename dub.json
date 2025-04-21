@@ -1,0 +1,60 @@
+{
+	"name": "d-ipcrypt2",
+	"description": "IP address obfuscation library for D",
+	"license": "MIT",
+	"targetPath": "bin",
+	"authors": [
+		"Matheus Catarino França"
+	],
+	"libs": [
+		"ipcrypt2"
+	],
+	"lflags-linux": [
+		"-L$PACKAGE_DIR/build"
+	],
+	"lflags-osx": [
+		"-L$PACKAGE_DIR/build"
+	],
+	"lflags-windows": [
+		"/LIBPATH:$PACKAGE_DIR\\build"
+	],
+	"dflags": [
+		"-preview=dip1000",
+		"-preview=in",
+		"-preview=rvaluerefparam",
+		"-P-I$PACKAGE_DIR/include"
+	],
+	"dflags-ldc": [
+		"--verrors-context"
+	],
+	"dflags-dmd": [
+		"-verrors=context"
+	],
+	"preBuildCommands-linux": [
+		"mkdir -p $PACKAGE_DIR/build $PACKAGE_DIR/include",
+		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
+		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
+		"mv ipcrypt2.h $PACKAGE_DIR/include/",
+		"gcc -std=c99 -O3 -fPIC -I$PACKAGE_DIR/include -c -o $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c",
+		"ar rcs $PACKAGE_DIR/build/libipcrypt2.a $PACKAGE_DIR/build/ipcrypt2.o",
+		"rm $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c"
+	],
+	"preBuildCommands-osx": [
+		"mkdir -p $PACKAGE_DIR/build $PACKAGE_DIR/include",
+		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
+		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
+		"mv ipcrypt2.h $PACKAGE_DIR/include/",
+		"clang -std=c99 -O3 -fPIC -I$PACKAGE_DIR/include -c -o $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c",
+		"ar rcs $PACKAGE_DIR/build/libipcrypt2.a $PACKAGE_DIR/build/ipcrypt2.o",
+		"rm $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c"
+	],
+	"preBuildCommands-windows": [
+		"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build, $PACKAGE_DIR\\include\"",
+		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c', 'ipcrypt2.c')\"",
+		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h', 'ipcrypt2.h')\"",
+		"powershell -Command \"Move-Item ipcrypt2.h $PACKAGE_DIR\\include\\\"",
+		"cl.exe /c /O2 /I\"$PACKAGE_DIR\\include\" /Fo:$PACKAGE_DIR\\build\\ipcrypt2.obj $PACKAGE_DIR\\ipcrypt2.c /nologo",
+		"lib.exe /OUT:$PACKAGE_DIR\\build\\ipcrypt2.lib $PACKAGE_DIR\\build\\ipcrypt2.obj",
+		"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\ipcrypt2.obj, $PACKAGE_DIR\\ipcrypt2.c\""
+	]
+}
