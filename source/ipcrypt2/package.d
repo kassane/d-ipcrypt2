@@ -1,35 +1,63 @@
 module ipcrypt2;
 
-import c.ipcrypt2c;
+public import c.ipcrypt2c;
 
-@("Initializes the ipcrypt2 library.") unittest
+@("Format-Preserving") unittest
 {
     import core.stdc.stdio;
+    import core.stdc.string : strcmp;
 
+    struct IPCryptScope
+    {
+        private IPCrypt ctx;
+
+        this(const ubyte* key)
+        {
+            ipcrypt_init(&ctx, key);
+        }
+
+        ~this()
+        {
+            ipcrypt_deinit(&ctx);
+        }
+
+        char[IPCRYPT_MAX_IP_STR_BYTES] encrypt(const char* ip)
+        {
+            char[IPCRYPT_MAX_IP_STR_BYTES] result;
+            ipcrypt_encrypt_ip_str(&ctx, &result[0], ip);
+            return result;
+        }
+
+        char[IPCRYPT_MAX_IP_STR_BYTES] decrypt(const char* ip)
+        {
+            char[IPCRYPT_MAX_IP_STR_BYTES] result;
+            ipcrypt_decrypt_ip_str(&ctx, &result[0], ip);
+            return result;
+        }
+    }
+
+    // Test key
     const ubyte[IPCRYPT_KEYBYTES] key = [
-        0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-        0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+        0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
+        0x4A, 0x4B, 0x4C, 0x4D, 0x4E, 0x4F, 0x50, 0x51
     ];
 
-    // Example IP (could be IPv4 or IPv6)
-    const(char)* original_ip = "192.168.0.100"; // or "::1"
+    // Test IPv6 address
+    string original_ip = "2001:db8::1";
 
-    IPCrypt ctx;
-    ipcrypt_init(&ctx, &key[0]);
-    // Clean up
-    scope (exit)
-        ipcrypt_deinit(&ctx);
+    // Use RAII wrapper
+    auto cryptor = IPCryptScope(&key[0]);
 
-    // Encrypt
-    char[IPCRYPT_MAX_IP_STR_BYTES] encrypted_ip;
-    ipcrypt_encrypt_ip_str(&ctx, &encrypted_ip[0], original_ip);
+    // Perform encryption and decryption
+    auto encrypted = cryptor.encrypt(&original_ip[0]);
+    auto decrypted = cryptor.decrypt(&encrypted[0]);
 
-    // Decrypt
-    char[IPCRYPT_MAX_IP_STR_BYTES] decrypted_ip;
-    ipcrypt_decrypt_ip_str(&ctx, &decrypted_ip[0], &encrypted_ip[0]);
+    // Verify results
+    assert(strcmp(&original_ip[0], &decrypted[0]) == 0, "Decryption failed to match original IP");
+    assert(strcmp(&original_ip[0], &encrypted[0]) != 0, "Encryption produced identical output");
 
     // Print results
-    printf("Original IP : %s\n", original_ip);
-    printf("Encrypted IP: %s\n", encrypted_ip.ptr);
-    printf("Decrypted IP: %s\n", decrypted_ip.ptr);
+    printf("Original IPv6: %s\n", &original_ip[0]);
+    printf("Encrypted IPv6: %s\n", &encrypted[0]);
+    printf("Decrypted IPv6: %s\n", &decrypted[0]);
 }
