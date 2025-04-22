@@ -1,5 +1,5 @@
 {
-	"name": "d-ipcrypt2",
+	"name": "ipcrypt2",
 	"description": "IP address obfuscation library for D",
 	"license": "MIT",
 	"targetPath": "bin",
