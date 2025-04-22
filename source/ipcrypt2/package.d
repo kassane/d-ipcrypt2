@@ -141,9 +141,9 @@ struct IPCrypt2
      *   random = 8-byte random data for non-determinism.
      * Returns: The 24-byte encrypted IP address.
      */
-    ubyte[24] ndEncryptIP16(scope const(ubyte)* ip16, scope const(ubyte)* random) nothrow @nogc @trusted
+    ubyte[IPCRYPT_NDIP_BYTES] ndEncryptIP16(scope const(ubyte)* ip16, scope const(ubyte)* random) nothrow @nogc @trusted
     {
-        ubyte[24] result;
+        ubyte[IPCRYPT_NDIP_BYTES] result;
         ipcrypt_nd_encrypt_ip16(&context, &result[0], &ip16[0], &random[0]);
         return result;
     }
@@ -170,7 +170,7 @@ struct IPCrypt2
      */
     string ndEncryptIPStr(scope const(char)* ipStr, scope const(ubyte)* random) nothrow @trusted
     {
-        char[49] result;
+        char[IPCRYPT_NDIP_STR_BYTES] result;
         size_t len = ipcrypt_nd_encrypt_ip_str(&context, &result[0], &ipStr[0], &random[0]);
         return result[0 .. len].idup;
     }
@@ -183,7 +183,7 @@ struct IPCrypt2
      */
     string ndDecryptIPStr(scope const(char)* encryptedIPStr) nothrow @trusted
     {
-        char[46] result;
+        char[IPCRYPT_MAX_IP_STR_BYTES] result;
         size_t len = ipcrypt_nd_decrypt_ip_str(&context, &result[0], &encryptedIPStr[0]);
         return result[0 .. len].idup;
     }
@@ -258,7 +258,7 @@ struct IPCryptNDXCtx
      */
     string encryptIPStr(string ipStr, scope const(ubyte)* random) nothrow @trusted
     {
-        char[65] result;
+        char[IPCRYPT_NDX_NDIP_STR_BYTES] result;
         size_t len = ipcrypt_ndx_encrypt_ip_str(&context, &result[0], &ipStr[0], &random[0]);
         return result[0 .. len].idup;
     }
@@ -271,7 +271,7 @@ struct IPCryptNDXCtx
      */
     string decryptIPStr(string encryptedIPStr) nothrow @trusted
     {
-        char[46] result;
+        char[IPCRYPT_MAX_IP_STR_BYTES] result;
         size_t len = ipcrypt_ndx_decrypt_ip_str(&context, &result[0], &encryptedIPStr[0]);
         return result[0 .. len].idup;
     }
@@ -299,7 +299,7 @@ ubyte[IPCRYPT_KEYBYTES] ipStrToIP16(string ipStr) @trusted
  */
 string ip16ToStr(scope const(ubyte)* ip16) nothrow @trusted
 {
-    char[46] result;
+    char[IPCRYPT_MAX_IP_STR_BYTES] result;
     size_t len = ipcrypt_ip16_to_str(&result[0], &ip16[0]);
     return result[0 .. len].idup;
 }
