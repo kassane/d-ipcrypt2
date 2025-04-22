@@ -1,0 +1,8 @@
+{
+	"dependencies": {
+		"ipcrypt2": "~>0.1.1"
+	},
+	"description": "A minimal D application.",
+	"license": "MIT",
+	"name": "simple"
+}
