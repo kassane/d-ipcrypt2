@@ -49,14 +49,12 @@
 		"rm $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c"
 	],
 	"preBuildCommands-windows": [
-		"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build, $PACKAGE_DIR\\include, $PACKAGE_DIR\\softaes\"",
+		"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build, $PACKAGE_DIR\\include\"",
 		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c', 'ipcrypt2.c')\"",
 		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h', 'ipcrypt2.h')\"",
-		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/softaes/untrinsics.h', 'untrinsics.h')\"",
 		"powershell -Command \"Move-Item 'ipcrypt2.h' '$PACKAGE_DIR\\include'\"",
-		"powershell -Command \"Move-Item 'untrinsics.h' '$PACKAGE_DIR\\softaes'\"",
-		"powershell -Command \"cl.exe /c /O2 /I`\"$PACKAGE_DIR\\include`\" /I`\"$PACKAGE_DIR\\softaes`\" /Fo:$PACKAGE_DIR\\build\\ipcrypt2.obj $PACKAGE_DIR\\ipcrypt2.c /nologo\"",
-		"powershell -Command \"lib.exe /OUT:$PACKAGE_DIR\\build\\ipcrypt2.lib $PACKAGE_DIR\\build\\ipcrypt2.obj\"",
+		"powershell -Command \"cl.exe /c /W4 /WX /I`\"$PACKAGE_DIR\\include`\" /Fo:$PACKAGE_DIR\\build\\ipcrypt2.obj $PACKAGE_DIR\\ipcrypt2.c /nologo\"",
+		"powershell -Command \"lib.exe /OUT:$PACKAGE_DIR\\build\\ipcrypt2.lib $PACKAGE_DIR\\build\\ipcrypt2.obj /logo\"",
 		"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\ipcrypt2.obj, $PACKAGE_DIR\\ipcrypt2.c\""
 	]
 }

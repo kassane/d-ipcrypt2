@@ -11,7 +11,7 @@ public import c.ipcrypt2c;
     {
         private IPCrypt ctx;
 
-        this(const ubyte* key)
+        this(const(ubyte)* key)
         {
             ipcrypt_init(&ctx, key);
         }
@@ -21,14 +21,14 @@ public import c.ipcrypt2c;
             ipcrypt_deinit(&ctx);
         }
 
-        char[IPCRYPT_MAX_IP_STR_BYTES] encrypt(const char* ip)
+        char[IPCRYPT_MAX_IP_STR_BYTES] encrypt(scope const(char)* ip)
         {
             char[IPCRYPT_MAX_IP_STR_BYTES] result;
             ipcrypt_encrypt_ip_str(&ctx, &result[0], ip);
             return result;
         }
 
-        char[IPCRYPT_MAX_IP_STR_BYTES] decrypt(const char* ip)
+        char[IPCRYPT_MAX_IP_STR_BYTES] decrypt(scope const(char)* ip)
         {
             char[IPCRYPT_MAX_IP_STR_BYTES] result;
             ipcrypt_decrypt_ip_str(&ctx, &result[0], ip);
