@@ -1,5 +1,13 @@
 name: CI
-on: [push]
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - '**'
+
 jobs:
   build:
     strategy:
@@ -10,22 +18,22 @@ jobs:
             compiler: dmd-latest
           - os: ubuntu-latest 
             arch: amd64
-            compiler: ldc-latest
+            compiler: ldc-master
           # - os: ubuntu-24.04-arm 
           #   arch: arm64
-          #   compiler: ldc-latest
+          #   compiler: ldc-master
           - os: macos-latest
             arch: arm64
             compiler: dmd-latest
           - os: macos-latest
             arch: arm64
-            compiler: ldc-latest
-          # - os: windows-latest
-          #   arch: amd64
-          #   compiler: dmd-latest
-          # - os: windows-latest
-          #   arch: amd64
-          #   compiler: ldc-latest
+            compiler: ldc-master
+          - os: windows-latest
+            arch: amd64
+            compiler: dmd-latest
+          - os: windows-latest
+            arch: amd64
+            compiler: ldc-master
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
