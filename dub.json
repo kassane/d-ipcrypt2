@@ -9,8 +9,12 @@
 	"authors": [
 		"Matheus Catarino França"
 	],
-	"libs": [
+	"libs-posix": [
 		"ipcrypt2"
+	],
+	"libs-windows": [
+		"ipcrypt2",
+		"ws2_32"
 	],
 	"lflags-linux": [
 		"-L$PACKAGE_DIR/build"
@@ -58,6 +62,7 @@
 		"powershell -Command \"Move-Item 'ipcrypt2.h' '$PACKAGE_DIR\\include' -Force\"",
 		"powershell -Command \"cl.exe /c /W4 /WX /I$PACKAGE_DIR\\include /Fo:$PACKAGE_DIR\\build\\ipcrypt2.obj $PACKAGE_DIR\\ipcrypt2.c /nologo\"",
 		"powershell -Command \"lib.exe /OUT:$PACKAGE_DIR\\build\\ipcrypt2.lib $PACKAGE_DIR\\build\\ipcrypt2.obj /logo\"",
-		"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\ipcrypt2.obj, $PACKAGE_DIR\\ipcrypt2.c\""
+		"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\ipcrypt2.obj, $PACKAGE_DIR\\ipcrypt2.c\"",
+		"powershell -Command \"Get-ChildItem -Path $PACKAGE_DIR\\build -Force\""
 	]
 }
