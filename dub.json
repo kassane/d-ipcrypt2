@@ -2,7 +2,10 @@
 	"name": "ipcrypt2",
 	"description": "IP address obfuscation library for D",
 	"license": "MIT",
-	"targetPath": "bin",
+	"version": "0.1.0",
+	"toolchainRequirements": {
+		"frontend": "2.111.0"
+	},
 	"authors": [
 		"Matheus Catarino França"
 	],
