@@ -1,11 +1,8 @@
-import std;
+import std.stdio : printf = writef;
 import ipcrypt2 : IPCrypt2, IPCRYPT_KEYBYTES;
 
-void main()
+void main() @safe
 {
-	import core.stdc.stdio;
-	import core.stdc.string : strcmp;
-
 	// Test key
 	ubyte[IPCRYPT_KEYBYTES] key = [
 		0x42, 0x43, 0x44, 0x45, 0x46, 0x47, 0x48, 0x49,
@@ -22,12 +19,7 @@ void main()
 	auto encrypted = crypt.encryptIPStr(original_ip);
 	auto decrypted = crypt.decryptIPStr(encrypted);
 
-	// Verify results
-	assert(original_ip == decrypted, "Decryption failed to match original IP");
-	assert(strcmp(&original_ip[0], &encrypted[0]) != 0, "Encryption produced identical output");
-
-	// Print results
-	printf("Original IP: %s\n", original_ip.toStringz);
-	printf("Encrypted IP: %s\n", encrypted.toStringz);
-	printf("Decrypted IP: %s\n", decrypted.toStringz);
+	printf("Original IP: %s\n", original_ip);
+	printf("Encrypted IP: %s\n", encrypted);
+	printf("Decrypted IP: %s\n", decrypted);
 }

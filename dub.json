@@ -2,7 +2,7 @@
 	"name": "ipcrypt2",
 	"description": "IP address obfuscation library for D",
 	"license": "MIT",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"toolchainRequirements": {
 		"frontend": "2.111.0"
 	},
@@ -43,9 +43,7 @@
 		"/LIBPATH:$PACKAGE_DIR\\build"
 	],
 	"dflags": [
-		"-preview=dip1000",
-		"-preview=in",
-		"-preview=rvaluerefparam",
+		"-preview=all",
 		"-P-I$PACKAGE_DIR/include"
 	],
 	"dflags-ldc": [
