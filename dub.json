@@ -9,6 +9,7 @@
 	"authors": [
 		"Matheus Catarino França"
 	],
+	"targetName": "d-ipcrypt2",
 	"targetPath": "build",
 	"buildTypes": {
 		"debug": {
