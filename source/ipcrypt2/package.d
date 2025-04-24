@@ -23,19 +23,19 @@ SOFTWARE.
 */
 
 /++
- D bindings for IPCrypt2, a simple and secure IP address obfuscation scheme.
-
- IPCrypt2 is a format-preserving encryption scheme for IPv4 and IPv6 addresses.
- It allows IP addresses to be encrypted while maintaining their format, making it
- suitable for logging and data retention purposes where IP addresses need to be
- pseudonymized.
-
- Features:
- - Format-preserving encryption for both IPv4 and IPv6 addresses
- - Cryptographically secure using AES-256 as the underlying cipher
- - Preserves subnets: addresses sharing a prefix are encrypted to addresses sharing the same prefix
- - Deterministic: same input and key always produces the same output
- - Fast and constant-time operation
++ D bindings for IPCrypt2, a simple and secure IP address obfuscation scheme.
++
++ IPCrypt2 is a format-preserving encryption scheme for IPv4 and IPv6 addresses.
++ It allows IP addresses to be encrypted while maintaining their format, making it
++ suitable for logging and data retention purposes where IP addresses need to be
++ pseudonymized.
++
++ Features:
++ - Format-preserving encryption for both IPv4 and IPv6 addresses
++ - Cryptographically secure using AES-128 as the underlying cipher
++ - Preserves subnets: addresses sharing a prefix are encrypted to addresses sharing the same prefix
++ - Deterministic: same input and key always produces the same output
++ - Fast and constant-time operation
  +/
 
 module ipcrypt2;
@@ -43,8 +43,7 @@ module ipcrypt2;
 /// IPCrypt2 C bindings
 public import c.ipcrypt2c; // @system
 
-import core.stdc.string : strlen;
-import std.exception;
+import std.exception : enforce, assertThrown;
 import std.string : toStringz, fromStringz;
 
 /**
@@ -65,7 +64,7 @@ struct IPCrypt2
     }
 
     /// Ditto, but constructs from a hexadecimal key string.
-    this(string hexKey) nothrow @nogc @trusted
+    this(ref string hexKey) nothrow @nogc @trusted
     {
         ubyte[IPCRYPT_KEYBYTES] key;
         ipcrypt_init(&context, &key[0]);
@@ -114,7 +113,7 @@ struct IPCrypt2
      *   ipStr = The IP address string to encrypt.
      * Returns: The encrypted IP address as a string.
      */
-    string encryptIPStr(string ipStr) nothrow @trusted
+    string encryptIPStr(ref string ipStr) nothrow @trusted
     {
         char[IPCRYPT_MAX_IP_STR_BYTES] result;
         size_t len = ipcrypt_encrypt_ip_str(&context, &result[0], &ipStr[0]);
@@ -127,7 +126,7 @@ struct IPCrypt2
      *   encryptedIPStr = The encrypted IP address string.
      * Returns: The decrypted IP address as a string.
      */
-    string decryptIPStr(string encryptedIPStr) nothrow @trusted
+    string decryptIPStr(ref string encryptedIPStr) nothrow @trusted
     {
         char[IPCRYPT_MAX_IP_STR_BYTES] result;
         size_t len = ipcrypt_decrypt_ip_str(&context, &result[0], &encryptedIPStr[0]);
@@ -207,7 +206,7 @@ struct IPCryptNDXCtx
     }
 
     /// Ditto, but constructs from a hexadecimal key string.
-    this(string hexKey) nothrow @nogc @trusted
+    this(ref string hexKey) nothrow @nogc @trusted
     {
         ubyte[IPCRYPT_KEYBYTES] key;
         ipcrypt_ndx_init(&context, &key[0]);
@@ -227,7 +226,7 @@ struct IPCryptNDXCtx
      * Params:
      *   ip16 = The 16-byte IP address to encrypt.
      *   random = 16-byte random data for non-determinism.
-     * Returns: The 32-byte encrypted IP address.
+     * Returns: The 16-byte encrypted IP address.
      */
     ubyte[IPCRYPT_NDX_KEYBYTES] encryptIP16(scope const(ubyte)* ip16, scope const(ubyte)* random) nothrow @nogc @trusted
     {
@@ -237,11 +236,11 @@ struct IPCryptNDXCtx
     }
 
     /**
-     * Decrypts a 32-byte encrypted IP address.
-     * Params:
-     *   ndip = The 32-byte encrypted IP address.
-     * Returns: The 16-byte decrypted IP address.
-     */
+    * Decrypt a non-deterministically encrypted 16-byte IP address, previously encrypted with
+    * `ipcrypt_ndx_encrypt_ip16`.333333
+    *
+    * Input is ndip, and output is written to ip16.
+    */
     ubyte[IPCRYPT_KEYBYTES] decryptIP16(scope const(ubyte)* ndip) nothrow @nogc @trusted
     {
         ubyte[IPCRYPT_KEYBYTES] result;
@@ -256,7 +255,7 @@ struct IPCryptNDXCtx
      *   random = 16-byte random data for non-determinism.
      * Returns: The encrypted IP address as a string.
      */
-    string encryptIPStr(string ipStr, scope const(ubyte)* random) nothrow @trusted
+    string encryptIPStr(ref string ipStr, scope const(ubyte)* random) nothrow @trusted
     {
         char[IPCRYPT_NDX_NDIP_STR_BYTES] result;
         size_t len = ipcrypt_ndx_encrypt_ip_str(&context, &result[0], &ipStr[0], &random[0]);
@@ -269,7 +268,7 @@ struct IPCryptNDXCtx
      *   encryptedIPStr = The encrypted IP address string.
      * Returns: The decrypted IP address as a string.
      */
-    string decryptIPStr(string encryptedIPStr) nothrow @trusted
+    string decryptIPStr(ref string encryptedIPStr) nothrow @trusted
     {
         char[IPCRYPT_MAX_IP_STR_BYTES] result;
         size_t len = ipcrypt_ndx_decrypt_ip_str(&context, &result[0], &encryptedIPStr[0]);
@@ -284,7 +283,7 @@ struct IPCryptNDXCtx
  * Returns: The 16-byte IP address.
  * Throws: Exception if the conversion fails.
  */
-ubyte[IPCRYPT_KEYBYTES] ipStrToIP16(string ipStr) @trusted
+ubyte[IPCRYPT_KEYBYTES] ipStrToIP16(ref string ipStr) @trusted
 {
     ubyte[IPCRYPT_KEYBYTES] result;
     enforce(ipcrypt_str_to_ip16(&result[0], &ipStr[0]) == 0, "Invalid IP address string");
@@ -365,6 +364,8 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
 @("Related functions")
 @safe unittest
 {
+    import std.random;
+
     // Test key for IPCrypt2 (16 bytes)
     ubyte[IPCRYPT_KEYBYTES] key = [
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -400,7 +401,11 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
     // Test 4: Non-deterministic encryption/decryption (IP16)
     {
         auto crypt = IPCrypt2(&key[0]);
-        ubyte[8] random = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88];
+        ubyte[IPCRYPT_TWEAKBYTES] random;
+        foreach (ref b; random)
+        {
+            b = cast(ubyte) uniform(0, 256);
+        }
         auto ndEncrypted = crypt.ndEncryptIP16(&ip16[0], &random[0]);
         auto ndDecrypted = crypt.ndDecryptIP16(&ndEncrypted[0]);
         assert(ndDecrypted == ip16, "ND IP16 encryption/decryption failed");
@@ -409,7 +414,11 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
     // Test 5: Non-deterministic encryption/decryption (IP string)
     {
         auto crypt = IPCrypt2(&key[0]);
-        ubyte[8] random = [0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88];
+        ubyte[IPCRYPT_TWEAKBYTES] random;
+        foreach (ref b; random)
+        {
+            b = cast(ubyte) uniform(0, 256);
+        }
         auto ndEncryptedStr = crypt.ndEncryptIPStr(&ipStr[0], &random[0]);
         auto ndDecryptedStr = crypt.ndDecryptIPStr(&ndEncryptedStr[0]);
         assert(ndDecryptedStr == ipStr, "ND IP string encryption/decryption failed");
@@ -447,6 +456,8 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
 @("IPCryptNDXCtx")
 @safe unittest
 {
+    import std.random;
+
     // Test key for IPCryptNDXCtx (16 bytes)
     ubyte[IPCRYPT_KEYBYTES] key = [
         0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
@@ -466,10 +477,11 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
     // Test 2: Encrypt and decrypt IP16
     {
         auto crypt = IPCryptNDXCtx(&key[0]);
-        ubyte[IPCRYPT_KEYBYTES] random = [
-            0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
-            0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30
-        ];
+        ubyte[IPCRYPT_KEYBYTES] random;
+        foreach (ref b; random)
+        {
+            b = cast(ubyte) uniform(0, 256);
+        }
         auto encrypted = crypt.encryptIP16(&ip16[0], &random[0]);
         auto decrypted = crypt.decryptIP16(&encrypted[0]);
         assert(decrypted == ip16, "NDX IP16 encryption/decryption failed");
@@ -478,10 +490,11 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
     // Test 3: Encrypt and decrypt IP string
     {
         auto crypt = IPCryptNDXCtx(&key[0]);
-        ubyte[IPCRYPT_KEYBYTES] random = [
-            0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
-            0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30
-        ];
+        ubyte[IPCRYPT_KEYBYTES] random;
+        foreach (ref b; random)
+        {
+            b = cast(ubyte) uniform(0, 256);
+        }
         auto encryptedStr = crypt.encryptIPStr(ipStr, &random[0]);
         auto decryptedStr = crypt.decryptIPStr(encryptedStr);
         assert(decryptedStr == ipStr, "NDX IP string encryption/decryption failed");
@@ -492,10 +505,11 @@ sockaddr_storage ip16ToSockaddr(scope const(ubyte)* ip16) nothrow @nogc @trusted
         string hexKey = "0102030405060708090A0B0C0D0E0F10" ~
             "1112131415161718191A1B1C1D1E1F20"; // Matches `key`
         auto crypt = IPCryptNDXCtx(hexKey);
-        ubyte[IPCRYPT_KEYBYTES] random = [
-            0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27, 0x28,
-            0x29, 0x2A, 0x2B, 0x2C, 0x2D, 0x2E, 0x2F, 0x30
-        ];
+        ubyte[IPCRYPT_KEYBYTES] random;
+        foreach (ref b; random)
+        {
+            b = cast(ubyte) uniform(0, 256);
+        }
         auto encrypted = crypt.encryptIP16(&ip16[0], &random[0]);
         auto decrypted = crypt.decryptIP16(&encrypted[0]);
         assert(decrypted == ip16, "NDX hex key initialization failed");
