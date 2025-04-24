@@ -33,6 +33,11 @@
 		"ipcrypt2",
 		"ws2_32"
 	],
+	"libs-windows-dmd": [
+		"ipcrypt2",
+		"ws2_32",
+		"bcrypt"
+	],
 	"lflags-linux": [
 		"-L$PACKAGE_DIR/build"
 	],
