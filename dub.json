@@ -63,7 +63,7 @@
 		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
 		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
 		"mv ipcrypt2.h $PACKAGE_DIR/include/",
-		"gcc -march=native -std=c99 -O3 -fPIE -I$PACKAGE_DIR/include -c -o $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c",
+		"gcc -march=native -flax-vector-conversions -std=c99 -O3 -fPIE -I$PACKAGE_DIR/include -c -o $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c",
 		"ar rcs $PACKAGE_DIR/build/libipcrypt2.a $PACKAGE_DIR/build/ipcrypt2.o",
 		"rm $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c"
 	],
