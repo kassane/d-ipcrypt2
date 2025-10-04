@@ -15,7 +15,7 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: amd64
-            compiler: dmd-latest
+            compiler: dmd-master
           - os: ubuntu-latest 
             arch: amd64
             compiler: ldc-master
@@ -24,20 +24,17 @@ jobs:
             compiler: ldc-master
           - os: macos-latest
             arch: arm64
-            compiler: dmd-latest
-          - os: macos-latest
-            arch: arm64
             compiler: ldc-master
           - os: windows-latest
             arch: amd64
-            compiler: dmd-latest
+            compiler: dmd-master
           - os: windows-latest
             arch: amd64
             compiler: ldc-master
       fail-fast: false
     runs-on: ${{matrix.os}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: dlang-community/setup-dlang@v2
         with:
           compiler: ${{matrix.compiler}}

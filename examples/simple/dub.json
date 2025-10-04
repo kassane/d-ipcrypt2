@@ -1,8 +1,9 @@
 {
-	"dependencies": {
-		"ipcrypt2": "~>0.1.5"
-	},
+	"name": "simple",
 	"description": "A minimal D application.",
-	"license": "MIT",
-	"name": "simple"
+	"dependencies": {
+		"ipcrypt2": {
+			"path": "../.."
+		}
+	}
 }

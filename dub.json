@@ -2,7 +2,7 @@
 	"name": "ipcrypt2",
 	"description": "IP address obfuscation library for D",
 	"license": "MIT",
-	"version": "0.1.5",
+	"version": "0.1.6",
 	"toolchainRequirements": {
 		"frontend": ">=2.111.0"
 	},
@@ -20,7 +20,6 @@
 		},
 		"release": {
 			"buildOptions": [
-				"releaseMode",
 				"optimize",
 				"inline"
 			]
@@ -47,40 +46,48 @@
 	"lflags-windows": [
 		"/LIBPATH:$PACKAGE_DIR\\build"
 	],
-	"dflags": [
-		"-preview=all",
-		"-P-I$PACKAGE_DIR/include"
+	"dflags-gdc": [
+		"-fpreview=all",
+		"-I$PACKAGE_DIR/include"
 	],
 	"dflags-ldc": [
+		"-preview=all",
+		"-P-I$PACKAGE_DIR/include",
 		"--verrors-context",
 		"-mcpu=native"
 	],
 	"dflags-dmd": [
+		"-preview=all",
+		"-P-I$PACKAGE_DIR/include",
 		"-verrors=context"
 	],
 	"preBuildCommands-linux": [
 		"mkdir -p $PACKAGE_DIR/build $PACKAGE_DIR/include",
-		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
-		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
-		"mv ipcrypt2.h $PACKAGE_DIR/include/",
+		"curl -sLO https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
+		"curl -sLO https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
+		"curl -sLO https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/softaes/untrinsics.h",
+		"mv ipcrypt2.h untrinsics.h $PACKAGE_DIR/include/",
 		"gcc -mtune=native -flax-vector-conversions -std=c99 -O3 -fPIE -I$PACKAGE_DIR/include -c -o $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c",
 		"ar rcs $PACKAGE_DIR/build/libipcrypt2.a $PACKAGE_DIR/build/ipcrypt2.o",
 		"rm $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c"
 	],
 	"preBuildCommands-osx": [
 		"mkdir -p $PACKAGE_DIR/build $PACKAGE_DIR/include",
-		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
-		"curl -sLO https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
-		"mv ipcrypt2.h $PACKAGE_DIR/include/",
+		"curl -sLO https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/ipcrypt2.c",
+		"curl -sLO https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h",
+		"curl -sLO https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/softaes/untrinsics.h",
+		"mv ipcrypt2.h untrinsics.h $PACKAGE_DIR/include/",
 		"clang -mcpu=native -std=c99 -O3 -fPIE -I$PACKAGE_DIR/include -c -o $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c",
 		"ar rcs $PACKAGE_DIR/build/libipcrypt2.a $PACKAGE_DIR/build/ipcrypt2.o",
 		"rm $PACKAGE_DIR/build/ipcrypt2.o $PACKAGE_DIR/ipcrypt2.c"
 	],
 	"preBuildCommands-windows": [
 		"powershell -Command \"mkdir -Force $PACKAGE_DIR\\build, $PACKAGE_DIR\\include\"",
-		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/ipcrypt2.c', 'ipcrypt2.c')\"",
-		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/jedisct1/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h', 'ipcrypt2.h')\"",
+		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/ipcrypt2.c', 'ipcrypt2.c')\"",
+		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/include/ipcrypt2.h', 'ipcrypt2.h')\"",
+		"powershell -Command \"(New-Object Net.WebClient).DownloadFile('https://raw.githubusercontent.com/ipcrypt-std/ipcrypt2/refs/heads/main/src/softaes/untrinsics.h', 'untrinsics.h')\"",
 		"powershell -Command \"Move-Item 'ipcrypt2.h' '$PACKAGE_DIR\\include' -Force\"",
+		"powershell -Command \"Move-Item 'untrinsics.h' '$PACKAGE_DIR\\include' -Force\"",
 		"powershell -Command \"cl.exe /c /W4 /WX /I$PACKAGE_DIR\\include /Fo:$PACKAGE_DIR\\build\\ipcrypt2.obj $PACKAGE_DIR\\ipcrypt2.c /nologo\"",
 		"powershell -Command \"lib.exe /OUT:$PACKAGE_DIR\\build\\ipcrypt2.lib $PACKAGE_DIR\\build\\ipcrypt2.obj\"",
 		"powershell -Command \"Remove-Item $PACKAGE_DIR\\build\\ipcrypt2.obj, $PACKAGE_DIR\\ipcrypt2.c\""
