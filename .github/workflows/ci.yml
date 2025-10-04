@@ -15,7 +15,7 @@ jobs:
         include:
           - os: ubuntu-latest
             arch: amd64
-            compiler: dmd-latest
+            compiler: dmd-master
           - os: ubuntu-latest 
             arch: amd64
             compiler: ldc-master
@@ -27,7 +27,7 @@ jobs:
             compiler: ldc-master
           - os: windows-latest
             arch: amd64
-            compiler: dmd-latest
+            compiler: dmd-master
           - os: windows-latest
             arch: amd64
             compiler: ldc-master
