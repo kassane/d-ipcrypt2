@@ -24,9 +24,6 @@ jobs:
             compiler: ldc-master
           - os: macos-latest
             arch: arm64
-            compiler: dmd-latest
-          - os: macos-latest
-            arch: arm64
             compiler: ldc-master
           - os: windows-latest
             arch: amd64

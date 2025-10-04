@@ -10,6 +10,7 @@ IPCrypt2 is a format-preserving encryption scheme for IPv4 and IPv6 addresses. I
 
 Features:
 - Format-preserving encryption for both IPv4 and IPv6 addresses
+- Prefix-Preserving encryption for produce encrypted IP addresses with the same prefix
 - Cryptographically secure using AES-128 as the underlying cipher
 - Preserves subnets: addresses sharing a prefix are encrypted to addresses sharing the same prefix
 - Deterministic: same input and key always produces the same output
@@ -26,6 +27,8 @@ Features:
 | [ipcrypt-js](https://www.npmjs.com/package/ipcrypt)                                                             | JavaScript |
 | [go-ipcrypt](https://github.com/jedisct1/go-ipcrypt)                                                            | Go         |
 | [zig-ipcrypt](https://github.com/jedisct1/zig-ipcrypt)                                                          | Zig        |
+| [ipcrypt-swift](https://github.com/jedisct1/ipcrypt-swift)                                                          | Swift        |
+| [ipcrypt-cobol](https://github.com/jedisct1/ipcrypt-cobol)                                                          | Cobol        |
 
 ## Acknowledgements
 
