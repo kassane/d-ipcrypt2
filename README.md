@@ -4,7 +4,7 @@
 ![Latest release](https://img.shields.io/github/v/release/kassane/d-ipcrypt2?include_prereleases&label=latest)
 [![Artifacts](https://github.com/kassane/d-ipcrypt2/actions/workflows/ci.yml/badge.svg)](https://github.com/kassane/d-ipcrypt2/actions/workflows/ci.yml)
 
-D bindings of [IPCrypt2](https://github.com/jedisct1/ipcrypt2), a simple and secure IP address obfuscation scheme.
+D bindings of [IPCrypt2](https://github.com/ipcrypt-std/ipcrypt2), a simple and secure IP address obfuscation scheme.
 
 IPCrypt2 is a format-preserving encryption scheme for IPv4 and IPv6 addresses. It allows IP addresses to be encrypted while maintaining their format, making it suitable for logging and data retention purposes where IP addresses need to be pseudonymized.
 
